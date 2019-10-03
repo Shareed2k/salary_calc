@@ -2,12 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:salary_calc/models/Clinic.dart';
+import 'package:salary_calc/models/clinic.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:validators/validators.dart';
 
 import 'clinic/clinic_row.dart';
+import 'clinic_visit_list_page.dart';
 
 class ClinicPage extends StatelessWidget {
   final FirebaseUser user;
@@ -29,7 +30,7 @@ class ClinicPage extends StatelessWidget {
               Icons.add_to_queue,
               color: Colors.white,
             ),
-            onPressed: () => _onClinicCreateDialog(context),
+            onPressed: () => _createClinicDialog(context),
           ),
           IconButton(
             icon: Icon(
@@ -76,14 +77,23 @@ class ClinicPage extends StatelessWidget {
       actionExtentRatio: 0.25,
       child: Container(
         color: Color(0xFF736AB7),
-        child: ClinicRow(clinic),
+        child: InkWell(
+          child: ClinicRow(clinic),
+          onTap: () => Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (_, __, ___) => VisitListPage(user: this.user, clinic: clinic),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+            )
+          ),
+        ),
       ),
       actions: <Widget>[
         IconSlideAction(
           caption: 'מחק',
           color: Color(0xFF736AB7),
           icon: Icons.delete,
-          onTap: () => _onClinicDeleteDialog(context, clinic),
+          onTap: () => _deleteClinicDialog(context, clinic),
         ),
       ],
       secondaryActions: <Widget>[
@@ -91,7 +101,7 @@ class ClinicPage extends StatelessWidget {
           caption: 'ערוך',
           color: Color(0xFF736AB7),
           icon: Icons.edit,
-          onTap: () => _onClinicCreateDialog(context, clinic: clinic),
+          onTap: () => _createClinicDialog(context, clinic: clinic),
         ),
       ],
     );
@@ -112,7 +122,7 @@ class ClinicPage extends StatelessWidget {
   }
 
   // ignore: avoid_init_to_null
-  Future<void> _onClinicCreateDialog(BuildContext context, {Clinic clinic = null}) async {
+  Future<void> _createClinicDialog(BuildContext context, {Clinic clinic = null}) async {
     final _formKey = GlobalKey<FormState>();
 
     if (clinic == null)
@@ -136,17 +146,16 @@ class ClinicPage extends StatelessWidget {
 
                   Future<void> ref;
                   if (clinic.id.isEmpty) {
-                    ref = Firestore.instance.collection("clinics").add(
-                        clinic.toJson());
+                    ref = Firestore.instance.collection("clinics").add(clinic.toJson());
                   } else {
                     ref = Firestore.instance.collection("clinics")
-                        .document(clinic.id).setData(clinic.toJson(), merge: true);
+                      .document(clinic.id).setData(clinic.toJson(), merge: true);
                   }
 
                   ref
-                      .then(Navigator.of(context).pop)
-                      .then((res) => showInfoFlushbar(context, '', clinic.id.isEmpty ? 'המרפאה נוצרה בהצלח.' : 'המרפאה עודכנה בהצלח.'))
-                      .catchError((err) => showInfoFlushbar(context, '', err.toString()));
+                    .then(Navigator.of(context).pop)
+                    .then((res) => showInfoFlushbar(context, '', clinic.id.isEmpty ? 'המרפאה נוצרה בהצלח.' : 'המרפאה עודכנה בהצלח.'))
+                    .catchError((err) => showInfoFlushbar(context, '', err.toString()));
                 }
               },
             ),
@@ -161,7 +170,7 @@ class ClinicPage extends StatelessWidget {
       });
   }
 
-  Future<void> _onClinicDeleteDialog(BuildContext context, Clinic clinic) async {
+  Future<void> _deleteClinicDialog(BuildContext context, Clinic clinic) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!

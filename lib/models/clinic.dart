@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Clinic {
   String id = '';
-  String uid;
+  String uid = '';
   String name = '';
   String description = '';
   double doctorProcent = 0;
+  double clinicPart = 0;
+  double employeePart = 0;
   Timestamp createdAt;
+  List<DocumentSnapshot> visits;
 
   Clinic(this.uid);
 
@@ -26,4 +31,12 @@ class Clinic {
       'description': description,
       'created_at': Timestamp.now()
     };
+
+  List toList() => [
+    {
+      'name': name,
+      'doctor_procent': doctorProcent,
+      'description': description,
+    }
+  ];
 }

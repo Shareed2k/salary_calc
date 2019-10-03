@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:salary_calc/models/clinic.dart';
+import 'package:salary_calc/models/visit.dart';
 
-class ClinicRow extends StatelessWidget {
+class VisitRow extends StatelessWidget {
 
-  final Clinic clinic;
+  final Visit visit;
 
-  ClinicRow(this.clinic);
+  VisitRow(this.visit);
 
   @override
   Widget build(BuildContext context) {
@@ -37,22 +37,22 @@ class ClinicRow extends StatelessWidget {
 
 
     final clinicCardContent = new Container(
-      margin: new EdgeInsets.fromLTRB(76.0, 16.0, 16.0, 16.0),
+      margin: EdgeInsets.fromLTRB(76.0, 16.0, 16.0, 16.0),
       constraints: new BoxConstraints.expand(),
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           new Container(height: 4.0),
-          new Text(this.clinic.name, style: headerTextStyle),
+          new Text(this.visit.name, style: headerTextStyle),
           new Container(height: 10.0),
           new Text(
-              this.clinic.description,
+              this.visit.description,
               style: subHeaderTextStyle,
               overflow: TextOverflow.fade,
               softWrap: false
           ),
           new Container(
-              margin: new EdgeInsets.symmetric(vertical: 8.0),
+              margin: EdgeInsets.symmetric(vertical: 8.0),
               height: 2.0,
               width: 18.0,
               color: new Color(0xff00c6ff)
@@ -61,13 +61,13 @@ class ClinicRow extends StatelessWidget {
             children: <Widget>[
               new Expanded(
                   child: _clinicValue(
-                      value: 'אחוז'
+                      value: 'מחיר'
                   )
 
               ),
               new Expanded(
                   child: _clinicValue(
-                      value: this.clinic.doctorProcent.toString()
+                      value: this.visit.cost.toString()
                   )
               )
             ],
