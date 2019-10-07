@@ -20,8 +20,7 @@ class Visit {
         cost = snapshot['cost'].toDouble(),
         createdAt = snapshot['created_at'];
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'uid': uid,
         'cid': cid,
         'name': name,
@@ -30,8 +29,7 @@ class Visit {
         'created_at': Timestamp.now()
       };
 
-  Map<String, dynamic> toJsonShort() =>
-      {
+  Map<String, dynamic> toJsonShort() => {
         'name': name,
         'cost': cost,
         'description': description,

@@ -1,112 +1,102 @@
 import 'package:flutter/material.dart';
 import 'package:salary_calc/models/visit.dart';
+import 'package:intl/intl.dart';
 
 class VisitRow extends StatelessWidget {
-
   final Visit visit;
 
   VisitRow(this.visit);
 
   @override
   Widget build(BuildContext context) {
-    final baseTextStyle = const TextStyle(
-        fontFamily: 'Poppins'
-    );
+    final baseTextStyle = const TextStyle(fontFamily: 'Poppins');
     final regularTextStyle = baseTextStyle.copyWith(
         color: const Color(0xffb6b2df),
         fontSize: 12.0,
-        fontWeight: FontWeight.w400
-    );
-    final subHeaderTextStyle = regularTextStyle.copyWith(
-        fontSize: 12.0
-    );
+        fontWeight: FontWeight.w400);
+    final subHeaderTextStyle = regularTextStyle.copyWith(fontSize: 12.0);
     final headerTextStyle = baseTextStyle.copyWith(
-        color: Colors.white,
-        fontSize: 18.0,
-        fontWeight: FontWeight.w600
-    );
+        color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.w600);
 
     Widget _clinicValue({String value}) {
-      return new Row(
-          children: <Widget>[
-            new Container(width: 8.0),
-            new Text(value, style: regularTextStyle),
-          ]
-      );
+      return Row(children: <Widget>[
+        Container(width: 8.0),
+        Text(value, style: regularTextStyle),
+      ]);
     }
 
-
-    final clinicCardContent = new Container(
-      margin: EdgeInsets.fromLTRB(76.0, 16.0, 16.0, 16.0),
-      constraints: new BoxConstraints.expand(),
-      child: new Column(
+    final clinicCardContent = Container(
+      margin: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
+      constraints: BoxConstraints.expand(),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          new Container(height: 4.0),
-          new Text(this.visit.name, style: headerTextStyle),
-          new Container(height: 10.0),
-          new Text(
-              this.visit.description,
+          Container(height: 4.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                child: Text(this.visit.name, style: headerTextStyle),
+              ),
+              Container(
+                child: Text(
+                    DateFormat.yMMMMEEEEd('he')
+                        .format(this.visit.createdAt.toDate()),
+                    style: TextStyle(
+                        fontFamily: 'Poppins',
+                        color: const Color(0xffb6b2df),
+                        fontSize: 11.0,
+                        fontWeight: FontWeight.w400)),
+              ),
+            ],
+          ),
+          Container(height: 5.0),
+          Text(this.visit.description,
               style: subHeaderTextStyle,
               overflow: TextOverflow.fade,
-              softWrap: false
-          ),
-          new Container(
+              softWrap: false),
+          Container(
               margin: EdgeInsets.symmetric(vertical: 8.0),
               height: 2.0,
               width: 18.0,
-              color: new Color(0xff00c6ff)
-          ),
-          new Row(
+              color: Color(0xff00c6ff)),
+          Row(
             children: <Widget>[
-              new Expanded(
-                  child: _clinicValue(
-                      value: 'מחיר'
-                  )
-
-              ),
-              new Expanded(
-                  child: _clinicValue(
-                      value: this.visit.cost.toString()
-                  )
-              )
+              Expanded(child: _clinicValue(value: 'מחיר')),
+              Expanded(child: _clinicValue(value: this.visit.cost.toString()))
             ],
           ),
         ],
       ),
     );
 
-
-    final clinicCard = new Container(
+    final clinicCard = Container(
       child: clinicCardContent,
       height: 124.0,
-      //margin: new EdgeInsets.only(left: 46.0),
-      decoration: new BoxDecoration(
-        color: new Color(0xFF333366),
+      decoration: BoxDecoration(
+        color: Color(0xFF333366),
         shape: BoxShape.rectangle,
-        borderRadius: new BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(8.0),
         boxShadow: <BoxShadow>[
-          new BoxShadow(
+          BoxShadow(
             color: Colors.black12,
             blurRadius: 10.0,
-            offset: new Offset(0.0, 10.0),
+            offset: Offset(0.0, 10.0),
           ),
         ],
       ),
     );
 
-
-    return new Container(
-      height: 120.0,
-      margin: const EdgeInsets.symmetric(
-        vertical: 5.0,
-        horizontal: 10.0,
-      ),
-      child: new Stack(
-        children: <Widget>[
-          clinicCard,
-        ],
-      )
-    );
+    return Container(
+        height: 120.0,
+        margin: const EdgeInsets.symmetric(
+          vertical: 5.0,
+          horizontal: 10.0,
+        ),
+        child: Stack(
+          children: <Widget>[
+            clinicCard,
+          ],
+        ));
   }
 }

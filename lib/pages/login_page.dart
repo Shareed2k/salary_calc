@@ -10,18 +10,17 @@ class LoginPage extends StatefulWidget {
   LoginPage({this.auth});
 
   @override
-  State<StatefulWidget> createState() => new LoginPageState();
+  State<StatefulWidget> createState() => LoginPageState();
 }
 
 class LoginPageState extends State<LoginPage> {
-
   String _errorMessage = '';
   bool _isLoading = false;
   bool _isIos = false;
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       body: Stack(
         children: <Widget>[
           _showBody(),
@@ -39,8 +38,8 @@ class LoginPageState extends State<LoginPage> {
       if (user != null) {
         Navigator.push(
           context,
-          new MaterialPageRoute(
-            builder: (context) => new ClinicPage(user: user),
+          MaterialPageRoute(
+            builder: (context) => ClinicPage(user: user),
           ),
         );
       }
@@ -62,13 +61,12 @@ class LoginPageState extends State<LoginPage> {
 
       if (user != null) {
         Navigator.push(
-            context,
-            new MaterialPageRoute(
-                builder: (context) => new ClinicPage(user: user),
-            ),
+          context,
+          MaterialPageRoute(
+            builder: (context) => ClinicPage(user: user),
+          ),
         );
       }
-
     } catch (e) {
       print('Error: $e');
       setState(() {
@@ -83,12 +81,12 @@ class LoginPageState extends State<LoginPage> {
 
   //////// widgets ////////////
 
-  Widget _showBody(){
-    return new Container(
+  Widget _showBody() {
+    return Container(
         padding: EdgeInsets.all(16.0),
-        child: new Form(
-          key: new GlobalKey<FormState>(),
-          child: new ListView(
+        child: Form(
+          key: GlobalKey<FormState>(),
+          child: ListView(
             shrinkWrap: true,
             children: <Widget>[
               //_showLogo(),
@@ -100,22 +98,22 @@ class LoginPageState extends State<LoginPage> {
   }
 
   Widget _showPrimaryButton() {
-    return new Padding(
+    return Padding(
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
-        child: new MaterialButton(
+        child: MaterialButton(
           elevation: 5.0,
           minWidth: 200.0,
           height: 42.0,
           color: Colors.blue,
-          child: new Text('Google sign',
-          style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+          child: Text('Google sign',
+              style: TextStyle(fontSize: 20.0, color: Colors.white)),
           onPressed: _submit,
         ));
   }
 
   Widget _showErrorMessage() {
     if (_errorMessage.length > 0 && _errorMessage != null) {
-      return new Text(
+      return Text(
         _errorMessage,
         style: TextStyle(
             fontSize: 13.0,
@@ -124,21 +122,24 @@ class LoginPageState extends State<LoginPage> {
             fontWeight: FontWeight.w300),
       );
     } else {
-      return new Container(
+      return Container(
         height: 0.0,
       );
     }
   }
 
-  Widget _showCircularProgress(){
+  Widget _showCircularProgress() {
     if (_isLoading) {
       return Center(child: CircularProgressIndicator());
-    } return Container(height: 0.0, width: 0.0,);
-
+    }
+    return Container(
+      height: 0.0,
+      width: 0.0,
+    );
   }
 
   /*Widget _showLogo() {
-    return new Hero(
+    return Hero(
       tag: 'hero',
       child: Padding(
         padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),

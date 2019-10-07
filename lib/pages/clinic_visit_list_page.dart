@@ -22,7 +22,6 @@ class VisitListPage extends StatelessWidget {
 
   VisitListPage({@required this.user, @required this.clinic});
 
-
   @override
   Widget build(BuildContext context) {
     clinicBloc = ClinicBloc(initialClinic: this.clinic);
@@ -59,17 +58,17 @@ class VisitListPage extends StatelessWidget {
       body: Container(
         constraints: BoxConstraints.expand(),
         color: Color(0xFF736AB7),
-        child: Stack (
+        child: Stack(
           children: <Widget>[
             //_getBackground(),
             _getGradient(),
             StreamBuilder(
                 stream: clinicBloc.clinicObservable,
                 initialData: this.clinic,
-                builder: (BuildContext context, AsyncSnapshot<Clinic> snapshot){
+                builder:
+                    (BuildContext context, AsyncSnapshot<Clinic> snapshot) {
                   return ClinicSummary(snapshot.data);
-                }
-            ),
+                }),
             _getContent(),
           ],
         ),
@@ -80,18 +79,18 @@ class VisitListPage extends StatelessWidget {
   Future _priviewClinicReport(context) async {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => new PreviewScreenshot(visitList: this.visitList),
+        builder: (_) => PreviewScreenshot(visitList: this.visitList),
       ),
     );
   }
 
   /*Container _getBackground () {
-    return new Container(
-      child: new Image.network(planet.picture,
+    return Container(
+      child: Image.network(planet.picture,
         fit: BoxFit.cover,
         height: 300.0,
       ),
-      constraints: new BoxConstraints.expand(height: 295.0),
+      constraints: BoxConstraints.expand(height: 295.0),
     );
   }*/
 
@@ -101,10 +100,7 @@ class VisitListPage extends StatelessWidget {
       height: 110.0,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: <Color>[
-            Color(0x00736AB7),
-            Color(0xFF736AB7)
-          ],
+          colors: <Color>[Color(0x00736AB7), Color(0xFF736AB7)],
           stops: [0.0, 0.9],
           begin: const FractionalOffset(0.0, 0.0),
           end: const FractionalOffset(0.0, 1.0),
@@ -124,12 +120,17 @@ class VisitListPage extends StatelessWidget {
             child: Container(
               margin: EdgeInsets.fromLTRB(0, 170, 0, 0),
               child: StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance.collection('visits')
+                stream: Firestore.instance
+                    .collection('visits')
                     .where('uid', isEqualTo: this.user.uid)
                     .where('cid', isEqualTo: this.clinic.id)
-                    .where('created_at', isGreaterThanOrEqualTo: Timestamp.fromDate(DateTime(date.year, date.month, 1)))
-                    .orderBy('created_at', descending: true).snapshots(),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    .where('created_at',
+                        isGreaterThanOrEqualTo: Timestamp.fromDate(
+                            DateTime(date.year, date.month, 1)))
+                    .orderBy('created_at', descending: true)
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (!snapshot.hasData) return Text('Loading...');
 
                   // reset vars
@@ -140,9 +141,11 @@ class VisitListPage extends StatelessWidget {
                   this.clinic.visits = snapshot.data.documents;
 
                   return ListView(
-                    children: snapshot.data.documents.map((DocumentSnapshot document) {
+                    children: snapshot.data.documents
+                        .map((DocumentSnapshot document) {
                       Visit visit = Visit.fromJson(document);
-                      double doctorPart = visit.cost * this.clinic.doctorProcent;
+                      double doctorPart =
+                          visit.cost * this.clinic.doctorProcent;
 
                       this.clinic.clinicPart += doctorPart;
                       this.clinic.employeePart += visit.cost - doctorPart;
@@ -156,14 +159,14 @@ class VisitListPage extends StatelessWidget {
                   );
                 },
               ),
-              ),
-            )
+            ),
+          )
         ],
       ),
     );
   }
 
-  Widget _setList (BuildContext context, Visit visit) {
+  Widget _setList(BuildContext context, Visit visit) {
     return Slidable(
       actionPane: SlidableDrawerActionPane(),
       actionExtentRatio: 0.25,
@@ -207,54 +210,65 @@ class VisitListPage extends StatelessWidget {
   }
 
   // ignore: avoid_init_to_null
-  Future<void> _createVisitDialog(BuildContext context, {Visit visit = null}) async {
+  Future<void> _createVisitDialog(BuildContext context,
+      {Visit visit = null}) async {
     final _formKey = GlobalKey<FormState>();
 
-    if (visit == null)
-      visit = Visit(this.user.uid);
+    if (visit == null) visit = Visit(this.user.uid);
 
     visit.cid = this.clinic.id;
 
     return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: visit.id.isEmpty ? Text('צור ביקור חדש') : Text('ערוך ביקור'),
-          content: SingleChildScrollView(
-            child: VisitForm(_formKey, visit),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('שמור'),
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  _formKey.currentState.save();
-
-                  Future<void> ref;
-                  if (visit.id.isEmpty) {
-                    ref = Firestore.instance.collection("visits").add(visit.toJson());
-                  } else {
-                    ref = Firestore.instance.collection("visits")
-                        .document(visit.id).setData(visit.toJson(), merge: true);
-                  }
-
-                  ref
-                      .then(Navigator.of(context).pop)
-                      .then((res) => showInfoFlushbar(context, '', visit.id.isEmpty ? 'ביקור נוצר בהצלח.' : 'ביקור עודכן בהצלח.'))
-                      .catchError((err) => showInfoFlushbar(context, '', err.toString()));
-                }
-              },
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title:
+                visit.id.isEmpty ? Text('צור ביקור חדש') : Text('ערוך ביקור'),
+            content: SingleChildScrollView(
+              child: VisitForm(_formKey, visit),
             ),
-            FlatButton(
-              child: Text('בטל'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        );
-      });
+            actions: <Widget>[
+              FlatButton(
+                child: Text('שמור'),
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    _formKey.currentState.save();
+
+                    Future<void> ref;
+                    if (visit.id.isEmpty) {
+                      ref = Firestore.instance
+                          .collection("visits")
+                          .add(visit.toJson());
+                    } else {
+                      ref = Firestore.instance
+                          .collection("visits")
+                          .document(visit.id)
+                          .setData(visit.toJson(), merge: true);
+                    }
+
+                    ref
+                        .then(Navigator.of(context).pop)
+                        .then((res) => showInfoFlushbar(
+                            context,
+                            '',
+                            visit.id.isEmpty
+                                ? 'ביקור נוצר בהצלח.'
+                                : 'ביקור עודכן בהצלח.'))
+                        .catchError((err) =>
+                            showInfoFlushbar(context, '', err.toString()));
+                  }
+                },
+              ),
+              FlatButton(
+                child: Text('בטל'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 
   Future<void> _deleteVisitDialog(BuildContext context, Visit visit) async {
@@ -274,9 +288,13 @@ class VisitListPage extends StatelessWidget {
           actions: <Widget>[
             FlatButton(
               child: Text('כן'),
-              onPressed: () => Firestore.instance.collection("visits").document(visit.id).delete()
+              onPressed: () => Firestore.instance
+                  .collection("visits")
+                  .document(visit.id)
+                  .delete()
                   .then(Navigator.of(context).pop)
-                  .catchError((err) => showInfoFlushbar(context, 'לא יכול למחוק ביקור', err.toString())),
+                  .catchError((err) => showInfoFlushbar(
+                      context, 'לא יכול למחוק ביקור', err.toString())),
             ),
             FlatButton(
               child: Text('לא'),
@@ -292,7 +310,6 @@ class VisitListPage extends StatelessWidget {
 }
 
 class VisitForm extends StatefulWidget {
-
   final GlobalKey<FormState> formKey;
   final Visit visit;
 
@@ -323,7 +340,7 @@ class VisitFormState extends State<VisitForm> {
             initialValue: this.visit.name,
             decoration: const InputDecoration(labelText: 'שם'),
             keyboardType: TextInputType.text,
-            onSaved: (value)  => this.visit.name = value,
+            onSaved: (value) => this.visit.name = value,
             validator: (value) {
               if (value.isEmpty) {
                 return 'אנא הכנס שם';
@@ -335,7 +352,7 @@ class VisitFormState extends State<VisitForm> {
             initialValue: this.visit.cost.toString(),
             decoration: const InputDecoration(labelText: 'מחיר'),
             keyboardType: TextInputType.number,
-            onSaved: (value)  => this.visit.cost = double.tryParse(value),
+            onSaved: (value) => this.visit.cost = double.tryParse(value),
             validator: (value) {
               if (value.isEmpty) {
                 return 'מחיר שדה נדרש';
@@ -352,7 +369,7 @@ class VisitFormState extends State<VisitForm> {
             maxLines: 8,
             decoration: const InputDecoration(labelText: 'תיאור'),
             keyboardType: TextInputType.multiline,
-            onSaved: (value)  => this.visit.description = value,
+            onSaved: (value) => this.visit.description = value,
             validator: (value) {
               if (value.isEmpty) {
                 return 'אנא הכנס תיאור';

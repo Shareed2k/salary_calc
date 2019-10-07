@@ -44,7 +44,7 @@ class ClinicRow extends StatelessWidget {
         children: <Widget>[
           new Container(height: 4.0),
           new Text(this.clinic.name, style: headerTextStyle),
-          new Container(height: 10.0),
+          new Container(height: 5.0),
           new Text(
               this.clinic.description,
               style: subHeaderTextStyle,
@@ -61,9 +61,8 @@ class ClinicRow extends StatelessWidget {
             children: <Widget>[
               new Expanded(
                   child: _clinicValue(
-                      value: 'אחוז'
+                      value: 'אחוז:'
                   )
-
               ),
               new Expanded(
                   child: _clinicValue(

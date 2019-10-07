@@ -39,17 +39,25 @@ class ClinicSummary extends StatelessWidget {
     }
 
     final clinicCardContent = Container(
-      margin: EdgeInsets.fromLTRB(16.0, 42.0, 16.0, 16.0),
+      margin: EdgeInsets.fromLTRB(16.0, 30.0, 16.0, 16.0),
       constraints: BoxConstraints.expand(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(height: 4.0),
-          Text(this.clinic.name, style: TextStyle(
+          Text(
+            'מרפאה',
+            style: TextStyle(
               fontFamily: 'Poppins',
               color: Colors.white,
-              fontSize: 18.0,
+              fontSize: 15.0,
               fontWeight: FontWeight.w600
+            )
+          ),
+          Text(this.clinic.name, style: TextStyle(
+              fontFamily: 'Poppins',
+              color: const Color(0xffb6b2df),
+              fontSize: 14.0,
+              fontWeight: FontWeight.w400
           )),
           Container(height: 10.0),
           Text(this.clinic.description, style: TextStyle(

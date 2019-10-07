@@ -15,7 +15,7 @@ class PreviewScreenshot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    GlobalKey globalKey = new GlobalKey();
+    GlobalKey globalKey = GlobalKey();
 
     return Scaffold(
       appBar: AppBar(
@@ -31,23 +31,23 @@ class PreviewScreenshot extends StatelessWidget {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: RepaintBoundary(
-          key: globalKey,
-          child: JsonTable(this.visitList),
-        )
-      ),
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: RepaintBoundary(
+            key: globalKey,
+            child: JsonTable(this.visitList),
+          )),
     );
   }
 
   Future<void> _captureScreenshot(_globalKey) async {
     try {
       RenderRepaintBoundary boundary =
-      _globalKey.currentContext.findRenderObject();
+          _globalKey.currentContext.findRenderObject();
       ui.Image image = await boundary.toImage();
-      ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+      ByteData byteData =
+          await image.toByteData(format: ui.ImageByteFormat.rawRgba);
       var png = byteData.buffer.asUint8List();
 
       final pdfLib.Document pdf = pdfLib.Document(
@@ -59,18 +59,14 @@ class PreviewScreenshot extends StatelessWidget {
         build: (c) {
           return pdfLib.Center(
               child: pdfLib.Image(
-                PdfImage(
-                    pdf.document,
-                    image: png,
-                    width: image.width,
-                    height: image.height
-                ),
-              )
-          );
+            PdfImage(pdf.document,
+                image: png, width: image.width, height: image.height),
+          ));
         },
       ));
 
-      final output = await getExternalStorageDirectory();// use the [path_provider (https://pub.dartlang.org/packages/path_provider) library:
+      final output =
+          await getExternalStorageDirectory(); // use the [path_provider (https://pub.dartlang.org/packages/path_provider) library:
       final file = File("${output.path}/example.pdf");
       await file.writeAsBytes(pdf.save());
     } catch (e) {

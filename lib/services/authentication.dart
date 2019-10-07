@@ -12,18 +12,20 @@ abstract class BaseAuth {
 
 class Auth implements BaseAuth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = new GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<FirebaseUser> signIn() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
 
     final AuthCredential credential = GoogleAuthProvider.getCredential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
-    AuthResult authResult = await _firebaseAuth.signInWithCredential(credential);
+    AuthResult authResult =
+        await _firebaseAuth.signInWithCredential(credential);
 
     return authResult.user;
   }
